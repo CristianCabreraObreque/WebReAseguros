@@ -31,21 +31,21 @@ const LoginPage: React.FC = () => {
       role: 'Perfil Técnico',
       email: 'admin@tecnico.com',
       description: 'Gestión de contratos, mantenedores y configuración del sistema',
-      color: 'bg-blue-500',
+      color: 'bg-[#0D4F45]',
       icon: Shield
     },
     {
       role: 'Perfil Compañía',
       email: 'usuario@compania.com',
       description: 'Colocación de seguros y gestión de pólizas',
-      color: 'bg-emerald-500',
+      color: 'bg-[#ED6A26]',
       icon: Building
     },
     {
       role: 'Perfil Reaseguros',
       email: 'reaseguros@swiss.com',
       description: 'Gestión de cuentas corrientes y bordereaux',
-      color: 'bg-purple-500',
+      color: 'bg-[#0D4F45]',
       icon: User
     }
   ];
@@ -56,14 +56,13 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#0D4F45] via-[#0D4F45]/80 to-[#0D4F45] flex items-center justify-center p-4">
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Panel de Login */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <Shield className="h-12 w-12 text-blue-600 mr-3" />
-              <h1 className="text-3xl font-bold text-gray-900">ReasegurosPro</h1>
+              <img src="/logo-m2mBroker-462x81-1.png" alt="m2m Broker" className="h-12" />
             </div>
             <p className="text-gray-600">Sistema Profesional de Gestión de Reaseguros</p>
           </div>
@@ -79,7 +78,7 @@ const LoginPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ED6A26] focus:border-transparent"
                   placeholder="Ingrese su email"
                   required
                 />
@@ -96,7 +95,7 @@ const LoginPage: React.FC = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ED6A26] focus:border-transparent"
                   placeholder="Ingrese su contraseña"
                   required
                 />
@@ -113,7 +112,7 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#ED6A26] hover:bg-[#C5581F] text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
@@ -130,7 +129,7 @@ const LoginPage: React.FC = () => {
         <div className="space-y-6">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-white mb-2">Perfiles de Usuario</h2>
-            <p className="text-blue-200">Seleccione un perfil para acceder al sistema</p>
+            <p className="text-[#F5F5F5]">Seleccione un perfil para acceder al sistema</p>
           </div>
 
           {demoUsers.map((user, index) => {
@@ -147,10 +146,10 @@ const LoginPage: React.FC = () => {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-white mb-1">{user.role}</h3>
-                    <p className="text-blue-200 text-sm mb-2">{user.description}</p>
+                    <p className="text-[#F5F5F5] text-sm mb-2">{user.description}</p>
                     <div className="bg-black/20 rounded-lg p-2">
-                      <p className="text-xs text-blue-100 font-mono">{user.email}</p>
-                      <p className="text-xs text-blue-200">Contraseña: 123456</p>
+                      <p className="text-xs text-[#F5F5F5] font-mono">{user.email}</p>
+                      <p className="text-xs text-[#F5F5F5]">Contraseña: 123456</p>
                     </div>
                   </div>
                 </div>
@@ -160,7 +159,7 @@ const LoginPage: React.FC = () => {
 
           <div className="bg-white/5 rounded-xl p-4 border border-white/10">
             <h4 className="text-white font-medium mb-2">Funcionalidades por Perfil:</h4>
-            <ul className="text-sm text-blue-200 space-y-1">
+            <ul className="text-sm text-[#F5F5F5] space-y-1">
               <li>• <strong>Técnico:</strong> Contratos, mantenedores, configuración</li>
               <li>• <strong>Compañía:</strong> Colocación de seguros, carga de pólizas</li>
               <li>• <strong>Reaseguros:</strong> Cuentas corrientes, bordereaux</li>

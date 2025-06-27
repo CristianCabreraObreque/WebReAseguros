@@ -45,7 +45,11 @@ const mockUsers: User[] = [
       'manage_reinsurers',
       'manage_brokers',
       'manage_technical_branches',
-      'system_configuration'
+      'system_configuration',
+      'create_placement',
+      'upload_policies',
+      'generate_bordereau',
+      'manage_current_account'
     ],
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
   },
