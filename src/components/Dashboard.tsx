@@ -1,7 +1,5 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useAuth } from '../contexts/AuthContext';
 import { 
   DollarSign, 
   FileText, 
@@ -9,9 +7,6 @@ import {
   Users,
   BarChart3,
   PieChart,
-  Shield,
-  Building,
-  Calculator
   Shield,
   Building,
   Calculator
@@ -57,11 +52,6 @@ const Dashboard: React.FC = () => {
       permission: 'manage_maintainers'
     }
   ];
-
-  // Filtrar estadísticas según permisos
-  const filteredStats = stats.filter(stat => 
-    !stat.permission || hasPermission(stat.permission)
-  );
 
   // Filtrar estadísticas según permisos
   const filteredStats = stats.filter(stat => 
@@ -125,9 +115,9 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      {hasPermission('view_dashboard') && (
+
       {/* Stats Grid */}
-      {filteredStats.length > 0 && (
+      {hasPermission('view_dashboard') && filteredStats.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredStats.map((stat, index) => (
             <StatsCard key={index} {...stat} />
@@ -150,6 +140,7 @@ const Dashboard: React.FC = () => {
         </div>
       )}
 
+      {hasPermission('view_dashboard') && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
