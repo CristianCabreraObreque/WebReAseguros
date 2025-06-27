@@ -17,7 +17,7 @@ const AccountingModule: React.FC = () => {
     return {
       title: 'Cuenta Corriente',
       subtitle: 'Gestión de cuenta corriente y generación de bordereaux',
-      color: 'bg-blue-600 hover:bg-blue-700'
+      color: 'bg-[#0D4F45] hover:bg-[#0D4F45]/80'
     };
   };
 
@@ -32,7 +32,7 @@ const AccountingModule: React.FC = () => {
         </div>
         <div className="flex space-x-3">
           {hasPermission('generate_bordereau') && (
-            <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+            <button className="bg-[#ED6A26] hover:bg-[#C5581F] text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
               <Download className="h-4 w-4" />
               <span>Generar Bordereau</span>
             </button>
@@ -55,17 +55,17 @@ const AccountingModule: React.FC = () => {
               <p className="text-2xl font-bold text-gray-900">$2.4M</p>
               <p className="text-sm text-emerald-600">+5.2% vs mes anterior</p>
             </div>
-            <Calculator className="h-8 w-8 text-blue-500" />
+            <Calculator className="h-8 w-8 text-[#0D4F45]" />
           </div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Por Cobrar</p>
-              <p className="text-2xl font-bold text-orange-600">$450K</p>
+              <p className="text-2xl font-bold text-[#ED6A26]">$450K</p>
               <p className="text-sm text-gray-500">15 movimientos</p>
             </div>
-            <CreditCard className="h-8 w-8 text-orange-500" />
+            <CreditCard className="h-8 w-8 text-[#ED6A26]" />
           </div>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -185,7 +185,7 @@ const AccountingModule: React.FC = () => {
               </div>
             </div>
             <div className="mt-6 flex space-x-3">
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+              <button className="bg-[#ED6A26] hover:bg-[#C5581F] text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                 <Download className="h-4 w-4" />
                 <span>Generar Bordereau</span>
               </button>
@@ -216,8 +216,8 @@ const AccountingModule: React.FC = () => {
                 <p className="text-sm text-gray-500">Por línea de negocio</p>
               </div>
             </button>
-            <button className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-              <Calculator className="h-6 w-6 text-blue-600" />
+            <button className="flex items-center space-x-3 p-4 bg-[#0D4F45]/10 hover:bg-[#0D4F45]/20 rounded-lg transition-colors">
+              <Calculator className="h-6 w-6 text-[#0D4F45]" />
               <div className="text-left">
                 <p className="font-medium text-gray-900">Liquidación de Cuentas</p>
                 <p className="text-sm text-gray-500">Proceso automático</p>

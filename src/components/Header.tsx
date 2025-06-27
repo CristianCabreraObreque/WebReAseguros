@@ -160,6 +160,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
     </header>
+  )
   );
 };
 

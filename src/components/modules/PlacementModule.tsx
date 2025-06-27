@@ -72,13 +72,13 @@ const PlacementModule: React.FC = () => {
       return {
         title: 'Colocación de Seguros',
         subtitle: 'Gestione la colocación de pólizas en el mercado reasegurador',
-        color: 'bg-emerald-600 hover:bg-emerald-700'
+        color: 'bg-[#ED6A26] hover:bg-[#C5581F]'
       };
     }
     return {
       title: 'Colocación de Reaseguros',
       subtitle: 'Gestiona colocaciones individuales y masivas de pólizas',
-      color: 'bg-blue-600 hover:bg-blue-700'
+      color: 'bg-[#0D4F45] hover:bg-[#0D4F45]/80'
     };
   };
 
@@ -93,7 +93,7 @@ const PlacementModule: React.FC = () => {
         </div>
         <div className="flex space-x-3">
           {hasPermission('upload_policies') && (
-            <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+            <button className="bg-[#0D4F45] hover:bg-[#0D4F45]/80 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
               <Upload className="h-4 w-4" />
               <span>Carga Masiva</span>
             </button>
@@ -116,7 +116,9 @@ const PlacementModule: React.FC = () => {
                 onClick={() => setActiveTab('individual')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'individual'
-                    ? 'border-blue-500 text-blue-600'
+                    ? user?.role === 'compania' 
+                      ? 'border-[#ED6A26] text-[#ED6A26]' 
+                      : 'border-[#0D4F45] text-[#0D4F45]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -128,7 +130,9 @@ const PlacementModule: React.FC = () => {
                 onClick={() => setActiveTab('bulk')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'bulk'
-                    ? 'border-blue-500 text-blue-600'
+                    ? user?.role === 'compania' 
+                      ? 'border-[#ED6A26] text-[#ED6A26]' 
+                      : 'border-[#0D4F45] text-[#0D4F45]'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -139,7 +143,9 @@ const PlacementModule: React.FC = () => {
               onClick={() => setActiveTab('history')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'history'
-                  ? 'border-blue-500 text-blue-600'
+                  ? user?.role === 'compania' 
+                    ? 'border-[#ED6A26] text-[#ED6A26]' 
+                    : 'border-[#0D4F45] text-[#0D4F45]'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -152,10 +158,10 @@ const PlacementModule: React.FC = () => {
           {activeTab === 'individual' && hasPermission('create_placement') && (
             <ProtectedRoute requiredPermission="create_placement">
             <div className="space-y-6">
-              <div className="bg-blue-50 rounded-lg p-6">
+              <div className={`${user?.role === 'compania' ? 'bg-[#ED6A26]/10' : 'bg-[#0D4F45]/10'} rounded-lg p-6`}>
                 <div className="flex items-center space-x-3 mb-4">
-                  <Target className="h-6 w-6 text-blue-600" />
-                  <h3 className="text-lg font-semibold text-blue-900">Nueva Colocación Individual</h3>
+                  <Target className={`h-6 w-6 ${user?.role === 'compania' ? 'text-[#ED6A26]' : 'text-[#0D4F45]'}`} />
+                  <h3 className={`text-lg font-semibold ${user?.role === 'compania' ? 'text-[#ED6A26]' : 'text-[#0D4F45]'}`}>Nueva Colocación Individual</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -224,7 +230,7 @@ const PlacementModule: React.FC = () => {
                   Arrastra y suelta tu archivo Excel o CSV aquí, o haz clic para seleccionar
                 </p>
                 <div className="flex justify-center space-x-4">
-                  <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                  <button className="bg-[#0D4F45] hover:bg-[#0D4F45]/80 text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors">
                     <Upload className="h-4 w-4" />
                     <span>Subir Archivo</span>
                   </button>
