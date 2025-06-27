@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -12,12 +13,17 @@ import {
   Shield,
   Building,
   Calculator
+  Shield,
+  Building,
+  Calculator
 } from 'lucide-react';
 import StatsCard from './ui/StatsCard';
 import ChartCard from './ui/ChartCard';
 import RecentActivity from './ui/RecentActivity';
 
 const Dashboard: React.FC = () => {
+  const { user, hasPermission } = useAuth();
+
   const { user, hasPermission } = useAuth();
 
   const stats = [
@@ -28,6 +34,7 @@ const Dashboard: React.FC = () => {
       trend: 'up' as const,
       icon: DollarSign,
       permission: 'view_dashboard'
+      permission: 'view_dashboard'
     },
     {
       title: 'Contratos Activos',
@@ -35,6 +42,7 @@ const Dashboard: React.FC = () => {
       change: '+8',
       trend: 'up' as const,
       icon: FileText,
+      permission: 'manage_contracts'
       permission: 'manage_contracts'
     },
     {
@@ -44,6 +52,7 @@ const Dashboard: React.FC = () => {
       trend: 'down' as const,
       icon: AlertTriangle,
       permission: 'view_claims'
+      permission: 'view_claims'
     },
     {
       title: 'Reaseguradoras',
@@ -52,8 +61,50 @@ const Dashboard: React.FC = () => {
       trend: 'up' as const,
       icon: Users,
       permission: 'manage_maintainers'
+      permission: 'manage_maintainers'
     }
   ];
+
+  // Filtrar estadísticas según permisos
+  const filteredStats = stats.filter(stat => 
+    !stat.permission || hasPermission(stat.permission)
+  );
+
+  const getWelcomeMessage = () => {
+    switch (user?.role) {
+      case 'tecnico':
+        return {
+          title: 'Panel Técnico - Sistema de Reaseguros',
+          subtitle: 'Gestione contratos, mantenedores y configuración del sistema',
+          icon: Shield,
+          color: 'from-blue-600 to-blue-800'
+        };
+      case 'compania':
+        return {
+          title: 'Portal de Compañía - Colocación de Seguros',
+          subtitle: 'Gestione la colocación de pólizas y seguimiento de reaseguros',
+          icon: Building,
+          color: 'from-emerald-600 to-emerald-800'
+        };
+      case 'reaseguros':
+        return {
+          title: 'Portal Reasegurador - Cuentas Corrientes',
+          subtitle: 'Gestione cuentas corrientes, bordereaux y liquidaciones',
+          icon: Calculator,
+          color: 'from-purple-600 to-purple-800'
+        };
+      default:
+        return {
+          title: 'Bienvenido al Sistema de Reaseguros',
+          subtitle: 'Gestiona contratos, colocaciones y siniestros de manera eficiente',
+          icon: BarChart3,
+          color: 'from-blue-600 to-blue-800'
+        };
+    }
+  };
+
+  const welcomeConfig = getWelcomeMessage();
+  const WelcomeIcon = welcomeConfig.icon;
 
   // Filtrar estadísticas según permisos
   const filteredStats = stats.filter(stat => 
@@ -109,6 +160,9 @@ const Dashboard: React.FC = () => {
             <p className="text-sm text-blue-200 mt-2">
               Bienvenido, {user?.name} - {user?.company}
             </p>
+            <p className="text-sm text-blue-200 mt-2">
+              Bienvenido, {user?.name} - {user?.company}
+            </p>
           </div>
           <div className="hidden md:block">
             <div className="bg-white/10 rounded-lg p-4">
@@ -133,6 +187,8 @@ const Dashboard: React.FC = () => {
               title="Evolución de Primas Cedidas"
               subtitle="Últimos 12 meses"
             />
+          </div>
+        )}
           </div>
         )}
         <div>
@@ -165,6 +221,14 @@ const Dashboard: React.FC = () => {
             )}
             {hasPermission('view_claims') && (
               <button className="flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+                <AlertTriangle className="h-6 w-6 text-orange-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Reportar Siniestro</p>
+                  <p className="text-sm text-gray-500">Registrar nuevo siniestro</p>
+                </div>
+              </button>
+            )}
+          </div>
                 <AlertTriangle className="h-6 w-6 text-orange-600" />
                 <div className="text-left">
                   <p className="font-medium text-gray-900">Reportar Siniestro</p>

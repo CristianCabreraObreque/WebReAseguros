@@ -36,6 +36,7 @@ const mockUsers: User[] = [
       'manage_contracts',
       'manage_maintainers',
       'view_placement',
+      'manage_placement',
       'view_claims',
       'view_accounting',
       'create_contracts',
@@ -57,6 +58,7 @@ const mockUsers: User[] = [
     permissions: [
       'view_dashboard',
       'view_contracts',
+      'view_placement',
       'manage_placement',
       'view_claims',
       'create_placement',
@@ -75,6 +77,7 @@ const mockUsers: User[] = [
       'view_dashboard',
       'view_contracts',
       'view_placement',
+      'view_accounting',
       'manage_accounting',
       'view_claims',
       'generate_bordereau',

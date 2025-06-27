@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -26,12 +27,48 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { hasPermission, user } = useAuth();
 
+  const { hasPermission, user } = useAuth();
+
   const menuItems = [
     { 
       id: 'dashboard', 
       label: 'Dashboard', 
       icon: LayoutDashboard, 
       permission: 'view_dashboard' 
+    },
+    { 
+      id: 'contracts', 
+      label: 'Contratos', 
+      icon: FileText, 
+      permission: 'manage_contracts',
+      roles: ['tecnico']
+    },
+    { 
+      id: 'placement', 
+      label: 'Colocación', 
+      icon: Shuffle, 
+      permission: 'view_placement',
+      roles: ['compania', 'tecnico']
+    },
+    { 
+      id: 'claims', 
+      label: 'Siniestros', 
+      icon: AlertTriangle, 
+      permission: 'view_claims' 
+    },
+    { 
+      id: 'accounting', 
+      label: 'Cuenta Corriente', 
+      icon: Calculator, 
+      permission: 'view_accounting',
+      roles: ['reaseguros', 'tecnico']
+    },
+    { 
+      id: 'maintainers', 
+      label: 'Mantenedores', 
+      icon: Settings, 
+      permission: 'manage_maintainers',
+      roles: ['tecnico']
     },
     { 
       id: 'contracts', 
@@ -84,6 +121,21 @@ const Sidebar: React.FC<SidebarProps> = ({
     return true;
   });
 
+  // Filtrar elementos del menú según permisos y roles
+  const filteredMenuItems = menuItems.filter(item => {
+    // Verificar permiso
+    if (item.permission && !hasPermission(item.permission)) {
+      return false;
+    }
+    
+    // Verificar rol si está especificado
+    if (item.roles && !item.roles.includes(user?.role || '')) {
+      return false;
+    }
+    
+    return true;
+  });
+
   return (
     <div className={`fixed left-0 top-0 h-full bg-slate-900 text-white transition-all duration-300 z-30 ${
       collapsed ? 'w-16' : 'w-64'
@@ -94,6 +146,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div className="flex items-center space-x-2">
               <Shield className="h-8 w-8 text-blue-400" />
               <div>
+                <span className="text-xl font-bold block">ReasegurosPro</span>
+                <span className="text-xs text-blue-300 capitalize">{user?.role}</span>
+              </div>
                 <span className="text-xl font-bold block">ReasegurosPro</span>
                 <span className="text-xs text-blue-300 capitalize">{user?.role}</span>
               </div>
@@ -133,6 +188,33 @@ const Sidebar: React.FC<SidebarProps> = ({
           })}
         </ul>
       </nav>
+
+      {/* User info at bottom */}
+      {!collapsed && (
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="bg-slate-800 rounded-lg p-3">
+            <div className="flex items-center space-x-3">
+              {user?.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.name}
+                  className="w-8 h-8 rounded-full"
+                />
+              ) : (
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-xs font-medium text-white">
+                    {user?.name.charAt(0)}
+                  </span>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">{user?.name}</p>
+                <p className="text-xs text-slate-400 truncate">{user?.company}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* User info at bottom */}
       {!collapsed && (
