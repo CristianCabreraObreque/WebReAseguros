@@ -44,6 +44,68 @@ const MaintainersModule: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
 
+  // Clasificadoras de Riesgo
+  const clasificadorasRiesgo = [
+    {
+      id: '1-1',
+      nombreEntidad: 'Standard & Poor\'s',
+      codigoCMF: 'SP-001',
+      setClasificacion: 'Modelo 1',
+      clasificacionMinima: 'BBB-',
+      habilitada: true,
+      fechaRegistro: '2020-01-15',
+      observaciones: 'Clasificadora internacional líder'
+    },
+    {
+      id: '1-2',
+      nombreEntidad: 'Moody\'s Investors Service',
+      codigoCMF: 'MDY-002',
+      setClasificacion: 'Modelo 1',
+      clasificacionMinima: 'Baa3',
+      habilitada: true,
+      fechaRegistro: '2020-01-15',
+      observaciones: 'Agencia de calificación crediticia'
+    },
+    {
+      id: '1-3',
+      nombreEntidad: 'Fitch Ratings',
+      codigoCMF: 'FTC-003',
+      setClasificacion: 'Modelo 2',
+      clasificacionMinima: 'BBB',
+      habilitada: true,
+      fechaRegistro: '2020-02-01',
+      observaciones: 'Clasificadora con enfoque en mercados emergentes'
+    },
+    {
+      id: '1-4',
+      nombreEntidad: 'A.M. Best Company',
+      codigoCMF: 'AMB-004',
+      setClasificacion: 'Modelo 3',
+      clasificacionMinima: 'B++',
+      habilitada: true,
+      fechaRegistro: '2020-03-10',
+      observaciones: 'Especializada en sector asegurador'
+    },
+    {
+      id: '1-5',
+      nombreEntidad: 'DBRS Morningstar',
+      codigoCMF: 'DBR-005',
+      setClasificacion: 'Modelo 1',
+      clasificacionMinima: 'BBB(low)',
+      habilitada: false,
+      fechaRegistro: '2021-06-15',
+      observaciones: 'Suspendida temporalmente'
+    }
+  ];
+
+  // Modelos de Clasificación disponibles
+  const modelosClasificacion = [
+    { id: 1, nombre: 'Modelo 1', descripcion: 'Escala estándar internacional' },
+    { id: 2, nombre: 'Modelo 2', descripcion: 'Escala con modificadores (+/-)' },
+    { id: 3, nombre: 'Modelo 3', descripcion: 'Escala específica para seguros' },
+    { id: 4, nombre: 'Modelo 4', descripcion: 'Escala local adaptada' }
+  ];
+
   // Sample data for companies with complete structure
   const companies = [
     {
@@ -1982,6 +2044,217 @@ const MaintainersModule: React.FC = () => {
           </div>
         );
 
+      case 'clasificadoras-riesgo':
+        return (
+          <div className="space-y-6">
+            {/* Clasificadora Form */}
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-200">
+              <h4 className="text-lg font-semibold text-purple-900 mb-4 flex items-center">
+                <Shield className="h-5 w-5 mr-2" />
+                Nueva Clasificadora de Riesgo
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ID Clasificadora <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Ej: 1-1, 1-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre de la Entidad <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Ej: Standard & Poor's"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Código CMF <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Ej: SP-001"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Set de Clasificación <span className="text-red-500">*</span>
+                  </label>
+                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option>Seleccionar modelo</option>
+                    {modelosClasificacion.map(modelo => (
+                      <option key={modelo.id} value={modelo.nombre}>
+                        {modelo.nombre} - {modelo.descripcion}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Clasificación Mínima <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Ej: BBB-, Baa3, B+"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Estado
+                  </label>
+                  <div className="flex items-center space-x-3 mt-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                        defaultChecked
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Habilitada</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="md:col-span-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Observaciones
+                  </label>
+                  <textarea
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    rows={2}
+                    placeholder="Comentarios adicionales sobre la clasificadora"
+                  />
+                </div>
+              </div>
+              <div className="mt-4 flex space-x-3">
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors">
+                  Guardar Clasificadora
+                </button>
+                <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg transition-colors">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+
+            {/* Modelos de Clasificación Info */}
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+              <h5 className="text-sm font-semibold text-blue-900 mb-3 flex items-center">
+                <Target className="h-4 w-4 mr-2" />
+                Modelos de Clasificación Disponibles
+              </h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {modelosClasificacion.map(modelo => (
+                  <div key={modelo.id} className="bg-white rounded p-3 border border-blue-100">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-blue-900">{modelo.nombre}</span>
+                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                        ID: {modelo.id}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">{modelo.descripcion}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Clasificadoras Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ID / Código CMF
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Clasificadora
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Modelo
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Clasificación Mínima
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Estado
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Fecha Registro
+                    </th>
+                    <th className="relative px-6 py-3">
+                      <span className="sr-only">Acciones</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {clasificadorasRiesgo.map((clasificadora) => (
+                    <tr key={clasificadora.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Shield className="h-5 w-5 text-purple-500 mr-3" />
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{clasificadora.id}</div>
+                            <div className="text-xs text-gray-500">{clasificadora.codigoCMF}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{clasificadora.nombreEntidad}</div>
+                          {clasificadora.observaciones && (
+                            <div className="text-xs text-gray-500">{clasificadora.observaciones}</div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {clasificadora.setClasificacion}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Target className="h-4 w-4 text-orange-500 mr-2" />
+                          <span className="text-sm font-medium text-orange-600">
+                            {clasificadora.clasificacionMinima}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          clasificadora.habilitada 
+                            ? 'bg-emerald-100 text-emerald-800' 
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {clasificadora.habilitada ? 'Habilitada' : 'Deshabilitada'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {clasificadora.fechaRegistro}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center space-x-2">
+                          <button className="text-blue-600 hover:text-blue-900 transition-colors">
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button className="text-red-600 hover:text-red-900 transition-colors">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+
       case 'coverages':
         return (
           <div className="space-y-6">
@@ -2172,226 +2445,4 @@ const MaintainersModule: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{broker.pais}</div>
-                        <div className="text-sm text-gray-500">{broker.region}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
-                          {broker.especialidad}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{broker.personaContacto}</div>
-                        <div className="text-sm text-gray-500">CMF: {broker.codigoCMF}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(broker.habilitada)}`}>
-                          {broker.habilitada ? 'Habilitado' : 'Deshabilitado'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900 transition-colors">
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button className="text-red-600 hover:text-red-900 transition-colors">
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Mantenedores del Sistema</h2>
-          <p className="text-gray-600">Administra datos maestros del sistema de reaseguros</p>
-        </div>
-        <button 
-          onClick={() => openModal('company')}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Agregar Nuevo</span>
-        </button>
-      </div>
-
-      {/* Tabs */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6 overflow-x-auto">
-            <button
-              onClick={() => setActiveTab('companies')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
-                activeTab === 'companies'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                <Building className="h-4 w-4" />
-                <span>Compañías</span>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('contracts')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
-                activeTab === 'contracts'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                <FileText className="h-4 w-4" />
-                <span>Contratos</span>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('cumulo-lines')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
-                activeTab === 'cumulo-lines'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                <Layers className="h-4 w-4" />
-                <span>Líneas de Cúmulo</span>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('technical-branches')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
-                activeTab === 'technical-branches'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                <Layers className="h-4 w-4" />
-                <span>Ramos Técnicos</span>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('coverages')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
-                activeTab === 'coverages'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                <Shield className="h-4 w-4" />
-                <span>Coberturas</span>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('brokers')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
-                activeTab === 'brokers'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4" />
-                <span>Brokers</span>
-              </div>
-            </button>
-          </nav>
-        </div>
-
-        <div className="p-6">
-          {renderTable()}
-        </div>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Compañías</p>
-              <p className="text-2xl font-bold text-gray-900">{companies.length}</p>
-              <p className="text-xs text-emerald-600">{companies.filter(c => c.habilitada).length} activas</p>
-            </div>
-            <Building className="h-8 w-8 text-blue-500" />
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Contratos</p>
-              <p className="text-2xl font-bold text-gray-900">{contracts.length}</p>
-              <p className="text-xs text-blue-600">Activos</p>
-            </div>
-            <FileText className="h-8 w-8 text-blue-500" />
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Líneas Cúmulo</p>
-              <p className="text-2xl font-bold text-gray-900">{cumuloLines.length}</p>
-              <p className="text-xs text-purple-600">Configuradas</p>
-            </div>
-            <Layers className="h-8 w-8 text-purple-500" />
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Ramos Técnicos</p>
-              <p className="text-2xl font-bold text-gray-900">{technicalBranches.length}</p>
-              <p className="text-xs text-emerald-600">{technicalBranches.filter(b => b.active).length} activos</p>
-            </div>
-            <Layers className="h-8 w-8 text-blue-500" />
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Coberturas</p>
-              <p className="text-2xl font-bold text-gray-900">{allCoverages.length}</p>
-              <p className="text-xs text-blue-600">Vinculadas</p>
-            </div>
-            <Shield className="h-8 w-8 text-emerald-500" />
-          </div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Brokers</p>
-              <p className="text-2xl font-bold text-gray-900">{brokers.length}</p>
-              <p className="text-xs text-purple-600">Registrados</p>
-            </div>
-            <Users className="h-8 w-8 text-purple-500" />
-          </div>
-        </div>
-      </div>
-
-      {/* Modals */}
-      {showModal && modalType === 'company' && <CompanyModal />}
-      {showModal && modalType === 'address' && <AddressModal />}
-      {showModal && modalType === 'classification' && <RiskClassificationModal />}
-      {showModal && modalType === 'cumulo' && <CumuloModal />}
-      {showModal && modalType === 'contract' && <ContractModal />}
-      {showModal && modalType === 'cumulo-line' && <CumuloLineModal />}
-    </div>
-  );
-};
-
-export default MaintainersModule;
+                        <div className="text-sm text-gray-900">{broker.p
