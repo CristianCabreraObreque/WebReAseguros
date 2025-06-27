@@ -44,68 +44,6 @@ const MaintainersModule: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
 
-  // Clasificadoras de Riesgo
-  const clasificadorasRiesgo = [
-    {
-      id: '1-1',
-      nombreEntidad: 'Standard & Poor\'s',
-      codigoCMF: 'SP-001',
-      setClasificacion: 'Modelo 1',
-      clasificacionMinima: 'BBB-',
-      habilitada: true,
-      fechaRegistro: '2020-01-15',
-      observaciones: 'Clasificadora internacional líder'
-    },
-    {
-      id: '1-2',
-      nombreEntidad: 'Moody\'s Investors Service',
-      codigoCMF: 'MDY-002',
-      setClasificacion: 'Modelo 1',
-      clasificacionMinima: 'Baa3',
-      habilitada: true,
-      fechaRegistro: '2020-01-15',
-      observaciones: 'Agencia de calificación crediticia'
-    },
-    {
-      id: '1-3',
-      nombreEntidad: 'Fitch Ratings',
-      codigoCMF: 'FTC-003',
-      setClasificacion: 'Modelo 2',
-      clasificacionMinima: 'BBB',
-      habilitada: true,
-      fechaRegistro: '2020-02-01',
-      observaciones: 'Clasificadora con enfoque en mercados emergentes'
-    },
-    {
-      id: '1-4',
-      nombreEntidad: 'A.M. Best Company',
-      codigoCMF: 'AMB-004',
-      setClasificacion: 'Modelo 3',
-      clasificacionMinima: 'B++',
-      habilitada: true,
-      fechaRegistro: '2020-03-10',
-      observaciones: 'Especializada en sector asegurador'
-    },
-    {
-      id: '1-5',
-      nombreEntidad: 'DBRS Morningstar',
-      codigoCMF: 'DBR-005',
-      setClasificacion: 'Modelo 1',
-      clasificacionMinima: 'BBB(low)',
-      habilitada: false,
-      fechaRegistro: '2021-06-15',
-      observaciones: 'Suspendida temporalmente'
-    }
-  ];
-
-  // Modelos de Clasificación disponibles
-  const modelosClasificacion = [
-    { id: 1, nombre: 'Modelo 1', descripcion: 'Escala estándar internacional' },
-    { id: 2, nombre: 'Modelo 2', descripcion: 'Escala con modificadores (+/-)' },
-    { id: 3, nombre: 'Modelo 3', descripcion: 'Escala específica para seguros' },
-    { id: 4, nombre: 'Modelo 4', descripcion: 'Escala local adaptada' }
-  ];
-
   // Sample data for companies with complete structure
   const companies = [
     {
@@ -435,6 +373,81 @@ const MaintainersModule: React.FC = () => {
     }
   ];
 
+  const clasificadoras = [
+    { id: 1, name: 'Standard & Poor\'s', codigo: 'SP-001', codigoCMF: 'CMF-SP-2024', setClasificacion: 'Modelo 1', clasificacionMinima: 'BBB-', habilitada: true, observaciones: 'Clasificadora líder mundial con presencia en más de 100 países' },
+    { id: 2, name: 'Moody\'s Investors Service', codigo: 'MDY-002', codigoCMF: 'CMF-MDY-2024', setClasificacion: 'Modelo 2', clasificacionMinima: 'Baa3', habilitada: true, observaciones: 'Especialista en análisis de riesgo crediticio y soberano' },
+    { id: 3, name: 'Fitch Ratings', codigo: 'FTC-003', codigoCMF: 'CMF-FTC-2024', setClasificacion: 'Modelo 1', clasificacionMinima: 'BBB-', habilitada: true, observaciones: 'Enfoque dual en mercados desarrollados y emergentes' },
+    { id: 4, name: 'A.M. Best Company', codigo: 'AMB-004', codigoCMF: 'CMF-AMB-2024', setClasificacion: 'Modelo 3', clasificacionMinima: 'B++', habilitada: true, observaciones: 'Especializada exclusivamente en la industria de seguros y reaseguros' },
+    { id: 5, name: 'DBRS Morningstar', codigo: 'DBR-005', codigoCMF: 'CMF-DBR-2024', setClasificacion: 'Modelo 1', clasificacionMinima: 'BBB(low)', habilitada: false, observaciones: 'Clasificadora internacional con presencia en Canadá' }
+  ];
+
+  const tiposAsociacion = [
+    { 
+      id: 1, 
+      descripcion: 'Ramo Técnico', 
+      prioridad: 1, 
+      activa: true,
+      observaciones: 'Asociación por categoría de ramo técnico (Incendio, RC, Automóviles, etc.)'
+    },
+    { 
+      id: 2, 
+      descripcion: 'Cobertura Específica', 
+      prioridad: 2, 
+      activa: true,
+      observaciones: 'Asociación por tipo de cobertura específica dentro del ramo'
+    },
+    { 
+      id: 3, 
+      descripcion: 'Zona Geográfica', 
+      prioridad: 3, 
+      activa: true,
+      observaciones: 'Asociación por ubicación geográfica del riesgo'
+    },
+    { 
+      id: 4, 
+      descripcion: 'Suma Asegurada', 
+      prioridad: 4, 
+      activa: true,
+      observaciones: 'Asociación por rangos de suma asegurada'
+    },
+    { 
+      id: 5, 
+      descripcion: 'Tipo de Cliente', 
+      prioridad: 5, 
+      activa: true,
+      observaciones: 'Asociación por categoría de asegurado (Persona Natural, Empresa, etc.)'
+    },
+    { 
+      id: 6, 
+      descripcion: 'Actividad Económica', 
+      prioridad: 6, 
+      activa: false,
+      observaciones: 'Asociación por sector económico del asegurado (En revisión)'
+    },
+    { 
+      id: 7, 
+      descripcion: 'Modalidad de Pago', 
+      prioridad: 7, 
+      activa: true,
+      observaciones: 'Asociación por forma de pago de primas'
+    },
+    { 
+      id: 8, 
+      descripcion: 'Canal de Distribución', 
+      prioridad: 8, 
+      activa: false,
+      observaciones: 'Asociación por canal de venta (Agentes, Brokers, Directo) - Pendiente implementación'
+    }
+  ];
+
+  const reinsurers = [
+    { id: 1, name: 'Swiss Re', country: 'Suiza', rating: 'AA+', contact: 'contact@swissre.com' },
+    { id: 2, name: 'Munich Re', country: 'Alemania', rating: 'AA', contact: 'info@munichre.com' },
+    { id: 3, name: 'Hannover Re', country: 'Alemania', rating: 'AA-', contact: 'contact@hannover-re.com' },
+    { id: 4, name: 'SCOR', country: 'Francia', rating: 'AA-', contact: 'info@scor.com' },
+    { id: 5, name: 'Lloyd\'s of London', country: 'Reino Unido', rating: 'AA-', contact: 'info@lloyds.com' }
+  ];
+
   // Flatten all coverages with their technical branch reference
   const allCoverages = technicalBranches.flatMap(branch => 
     branch.coverages.map(coverage => ({
@@ -496,6 +509,20 @@ const MaintainersModule: React.FC = () => {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const getPriorityColor = (priority: number) => {
+    if (priority <= 2) return 'text-red-600 font-semibold';
+    if (priority <= 4) return 'text-yellow-600 font-medium';
+    if (priority <= 6) return 'text-blue-600';
+    return 'text-green-600';
+  };
+
+  const getPriorityLabel = (priority: number) => {
+    if (priority <= 2) return 'Alta';
+    if (priority <= 4) return 'Media';
+    if (priority <= 6) return 'Baja';
+    return 'Mínima';
   };
 
   // Modal Components
@@ -2044,217 +2071,6 @@ const MaintainersModule: React.FC = () => {
           </div>
         );
 
-      case 'clasificadoras-riesgo':
-        return (
-          <div className="space-y-6">
-            {/* Clasificadora Form */}
-            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-200">
-              <h4 className="text-lg font-semibold text-purple-900 mb-4 flex items-center">
-                <Shield className="h-5 w-5 mr-2" />
-                Nueva Clasificadora de Riesgo
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ID Clasificadora <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Ej: 1-1, 1-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre de la Entidad <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Ej: Standard & Poor's"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Código CMF <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Ej: SP-001"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Set de Clasificación <span className="text-red-500">*</span>
-                  </label>
-                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <option>Seleccionar modelo</option>
-                    {modelosClasificacion.map(modelo => (
-                      <option key={modelo.id} value={modelo.nombre}>
-                        {modelo.nombre} - {modelo.descripcion}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Clasificación Mínima <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Ej: BBB-, Baa3, B+"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Estado
-                  </label>
-                  <div className="flex items-center space-x-3 mt-3">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                        defaultChecked
-                      />
-                      <span className="ml-2 text-sm text-gray-700">Habilitada</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="md:col-span-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Observaciones
-                  </label>
-                  <textarea
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    rows={2}
-                    placeholder="Comentarios adicionales sobre la clasificadora"
-                  />
-                </div>
-              </div>
-              <div className="mt-4 flex space-x-3">
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors">
-                  Guardar Clasificadora
-                </button>
-                <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg transition-colors">
-                  Cancelar
-                </button>
-              </div>
-            </div>
-
-            {/* Modelos de Clasificación Info */}
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-              <h5 className="text-sm font-semibold text-blue-900 mb-3 flex items-center">
-                <Target className="h-4 w-4 mr-2" />
-                Modelos de Clasificación Disponibles
-              </h5>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {modelosClasificacion.map(modelo => (
-                  <div key={modelo.id} className="bg-white rounded p-3 border border-blue-100">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-blue-900">{modelo.nombre}</span>
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                        ID: {modelo.id}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-600 mt-1">{modelo.descripcion}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Clasificadoras Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ID / Código CMF
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Clasificadora
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Modelo
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Clasificación Mínima
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Estado
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Fecha Registro
-                    </th>
-                    <th className="relative px-6 py-3">
-                      <span className="sr-only">Acciones</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {clasificadorasRiesgo.map((clasificadora) => (
-                    <tr key={clasificadora.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Shield className="h-5 w-5 text-purple-500 mr-3" />
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{clasificadora.id}</div>
-                            <div className="text-xs text-gray-500">{clasificadora.codigoCMF}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{clasificadora.nombreEntidad}</div>
-                          {clasificadora.observaciones && (
-                            <div className="text-xs text-gray-500">{clasificadora.observaciones}</div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {clasificadora.setClasificacion}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Target className="h-4 w-4 text-orange-500 mr-2" />
-                          <span className="text-sm font-medium text-orange-600">
-                            {clasificadora.clasificacionMinima}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          clasificadora.habilitada 
-                            ? 'bg-emerald-100 text-emerald-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {clasificadora.habilitada ? 'Habilitada' : 'Deshabilitada'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {clasificadora.fechaRegistro}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900 transition-colors">
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button className="text-red-600 hover:text-red-900 transition-colors">
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
-
       case 'coverages':
         return (
           <div className="space-y-6">
@@ -2445,4 +2261,165 @@ const MaintainersModule: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{broker.p
+                        <div className="text-sm text-gray-900">{broker.pais}</div>
+                        <div className="text-sm text-gray-500">{broker.region}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                          {broker.especialidad}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{broker.personaContacto}</div>
+                        <div className="text-sm text-gray-500">CMF: {broker.codigoCMF}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(broker.habilitada)}`}>
+                          {broker.habilitada ? 'Habilitado' : 'Deshabilitado'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center space-x-2">
+                          <button className="text-blue-600 hover:text-blue-900 transition-colors">
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button className="text-red-600 hover:text-red-900 transition-colors">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+
+      case 'clasificadoras':
+        return (
+          <div className="space-y-6">
+            {/* Clasificadoras Form */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
+              <h4 className="text-lg font-semibold text-purple-900 mb-4 flex items-center">
+                <Shield className="h-5 w-5 mr-2" />
+                Nueva Clasificadora de Riesgo
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Ej: Standard & Poor's"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Código <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="SP-001"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Código CMF
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="CMF-SP-2024"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Set de Clasificación
+                  </label>
+                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option value="">Seleccionar modelo</option>
+                    <option value="Modelo 1">Modelo 1 - Standard</option>
+                    <option value="Modelo 2">Modelo 2 - Moody's</option>
+                    <option value="Modelo 3">Modelo 3 - A.M. Best</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Clasificación Mínima
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="BBB-"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Estado
+                  </label>
+                  <div className="flex items-center space-x-3 mt-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                        defaultChecked
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Habilitada</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="md:col-span-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Observaciones
+                  </label>
+                  <textarea
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    rows={2}
+                    placeholder="Información adicional sobre la clasificadora"
+                  />
+                </div>
+              </div>
+              <div className="mt-4 flex space-x-3">
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors">
+                  Guardar Clasificadora
+                </button>
+                <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg transition-colors">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+
+            {/* Clasificadoras Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Clasificadora
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Código/CMF
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Set Clasificación
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Clasificación Mínima
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Estado
+                    </th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Observaciones
+                    </th>
+                    <th className="relative px-6 py-3">
+                      <span className="sr-only">Acciones</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {clasificadoras.map((clasificadora)
