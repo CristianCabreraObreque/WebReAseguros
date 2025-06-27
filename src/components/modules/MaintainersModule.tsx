@@ -21,8 +21,76 @@ import {
   Shield,
   Calendar,
   FileText,
-  Settings
+  Settings,
+  CreditCard,
+  AlertCircle,
+  CheckCircle
 } from 'lucide-react';
+
+interface Company {
+  id: number;
+  name: string;
+  abbreviation: string;
+  cmfCode: string;
+  origin: 'LOCAL' | 'EXTRANJERO';
+  country: string;
+  region: string;
+  taxId: string;
+  accountingAux: string;
+  accountingAccount: string;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+  role: 'Reasegurador' | 'Bróker' | 'Ambos';
+  relationship: 'Ninguna' | 'Uso interno' | 'Es parte del grupo' | 'Es casa matriz';
+  observations: string;
+  enabled: boolean;
+  reason: 'Alta' | 'Baja' | 'Modificación';
+  user: string;
+  lastModified: string;
+  addresses: Address[];
+  contacts: Contact[];
+  riskClassifications: RiskClassification[];
+  patrimony: Patrimony[];
+}
+
+interface Address {
+  id: number;
+  companyId: number;
+  type: string;
+  address: string;
+  number: string;
+  postalCode: string;
+  city: string;
+}
+
+interface Contact {
+  id: number;
+  companyId: number;
+  type: 'Comercial' | 'Técnico' | 'Financiero' | 'Jurídico';
+  contactNumber: string;
+  name: string;
+  email: string;
+}
+
+interface RiskClassification {
+  id: number;
+  companyId: number;
+  year: number;
+  ratingAgency: string;
+  classificationType: string;
+  classificationDate: string;
+  letterDate: string;
+}
+
+interface Patrimony {
+  id: number;
+  companyId: number;
+  year: number;
+  amount: number;
+  currency: string;
+  technicalBranch: string;
+  maxAccumulation: number;
+}
 
 const MaintainersModule: React.FC = () => {
   const { hasPermission, user } = useAuth();
@@ -30,11 +98,11 @@ const MaintainersModule: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const [showNewCompanyModal, setShowNewCompanyModal] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState<any>(null);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [showCompanyDetails, setShowCompanyDetails] = useState(false);
 
-  // Mock data for companies
-  const companies = [
+  // Mock data for companies with complete entity structure
+  const companies: Company[] = [
     {
       id: 1,
       name: 'Swiss Reinsurance Company Ltd.',
@@ -50,7 +118,7 @@ const MaintainersModule: React.FC = () => {
       effectiveTo: null,
       role: 'Reasegurador',
       relationship: 'Ninguna',
-      observations: 'Principal reasegurador para líneas de incendio y responsabilidad civil',
+      observations: 'Principal reasegurador para líneas de incendio y responsabilidad civil. Excelente capacidad financiera y rating crediticio.',
       enabled: true,
       reason: 'Alta',
       user: 'admin',
@@ -58,47 +126,87 @@ const MaintainersModule: React.FC = () => {
       addresses: [
         {
           id: 1,
+          companyId: 1,
           type: 'DOMICILIO COMERCIAL',
           address: 'Mythenquai 50/60',
           number: '50',
           postalCode: '8022',
+          city: 'Zurich'
+        },
+        {
+          id: 2,
+          companyId: 1,
+          type: 'ADMINISTRATIVA',
+          address: 'Bahnhofstrasse 45',
+          number: '45',
+          postalCode: '8001',
           city: 'Zurich'
         }
       ],
       contacts: [
         {
           id: 1,
+          companyId: 1,
           type: 'Comercial',
           name: 'Hans Mueller',
-          phone: '+41-43-285-2121',
+          contactNumber: '+41-43-285-2121',
           email: 'hans.mueller@swissre.com'
         },
         {
           id: 2,
+          companyId: 1,
           type: 'Técnico',
           name: 'Anna Schmidt',
-          phone: '+41-43-285-2122',
+          contactNumber: '+41-43-285-2122',
           email: 'anna.schmidt@swissre.com'
+        },
+        {
+          id: 3,
+          companyId: 1,
+          type: 'Financiero',
+          name: 'Klaus Weber',
+          contactNumber: '+41-43-285-2123',
+          email: 'klaus.weber@swissre.com'
         }
       ],
       riskClassifications: [
         {
           id: 1,
+          companyId: 1,
           year: 2024,
           ratingAgency: "Standard & Poor's",
           classificationType: 'AA-',
           classificationDate: '2024-01-15',
           letterDate: '2024-01-10'
+        },
+        {
+          id: 2,
+          companyId: 1,
+          year: 2023,
+          ratingAgency: "Moody's",
+          classificationType: 'Aa3',
+          classificationDate: '2023-12-20',
+          letterDate: '2023-12-15'
         }
       ],
       patrimony: [
         {
           id: 1,
+          companyId: 1,
           year: 2024,
           amount: 45000000000,
           currency: 'USD',
           technicalBranch: 'Incendio',
           maxAccumulation: 500000000
+        },
+        {
+          id: 2,
+          companyId: 1,
+          year: 2024,
+          amount: 45000000000,
+          currency: 'USD',
+          technicalBranch: 'Responsabilidad Civil',
+          maxAccumulation: 300000000
         }
       ]
     },
@@ -117,14 +225,15 @@ const MaintainersModule: React.FC = () => {
       effectiveTo: null,
       role: 'Reasegurador',
       relationship: 'Ninguna',
-      observations: 'Especialista en reaseguros de vida y salud',
+      observations: 'Especialista en reaseguros de vida y salud. Amplia experiencia en mercados emergentes.',
       enabled: true,
       reason: 'Alta',
       user: 'admin',
       lastModified: '2024-01-10',
       addresses: [
         {
-          id: 1,
+          id: 3,
+          companyId: 2,
           type: 'DOMICILIO COMERCIAL',
           address: 'Königinstraße 107',
           number: '107',
@@ -134,16 +243,26 @@ const MaintainersModule: React.FC = () => {
       ],
       contacts: [
         {
-          id: 1,
+          id: 4,
+          companyId: 2,
           type: 'Comercial',
           name: 'Klaus Weber',
-          phone: '+49-89-3891-0',
+          contactNumber: '+49-89-3891-0',
           email: 'klaus.weber@munichre.com'
+        },
+        {
+          id: 5,
+          companyId: 2,
+          type: 'Técnico',
+          name: 'Ingrid Hoffman',
+          contactNumber: '+49-89-3891-1234',
+          email: 'ingrid.hoffman@munichre.com'
         }
       ],
       riskClassifications: [
         {
-          id: 1,
+          id: 3,
+          companyId: 2,
           year: 2024,
           ratingAgency: "Moody's",
           classificationType: 'Aa3',
@@ -153,7 +272,8 @@ const MaintainersModule: React.FC = () => {
       ],
       patrimony: [
         {
-          id: 1,
+          id: 3,
+          companyId: 2,
           year: 2024,
           amount: 38000000000,
           currency: 'EUR',
@@ -177,14 +297,15 @@ const MaintainersModule: React.FC = () => {
       effectiveTo: null,
       role: 'Reasegurador',
       relationship: 'Ninguna',
-      observations: 'Enfoque en mercados latinoamericanos',
+      observations: 'Enfoque en mercados latinoamericanos. Especialista en ramos generales.',
       enabled: true,
       reason: 'Alta',
       user: 'admin',
       lastModified: '2024-01-12',
       addresses: [
         {
-          id: 1,
+          id: 4,
+          companyId: 3,
           type: 'DOMICILIO COMERCIAL',
           address: 'Paseo de Recoletos 25',
           number: '25',
@@ -194,16 +315,18 @@ const MaintainersModule: React.FC = () => {
       ],
       contacts: [
         {
-          id: 1,
+          id: 6,
+          companyId: 3,
           type: 'Comercial',
           name: 'Carlos Mendoza',
-          phone: '+34-91-581-1100',
+          contactNumber: '+34-91-581-1100',
           email: 'carlos.mendoza@mapfrere.com'
         }
       ],
       riskClassifications: [
         {
-          id: 1,
+          id: 4,
+          companyId: 3,
           year: 2024,
           ratingAgency: 'Fitch Ratings',
           classificationType: 'A',
@@ -213,12 +336,85 @@ const MaintainersModule: React.FC = () => {
       ],
       patrimony: [
         {
-          id: 1,
+          id: 4,
+          companyId: 3,
           year: 2024,
           amount: 8500000000,
           currency: 'EUR',
           technicalBranch: 'Automóviles',
           maxAccumulation: 150000000
+        }
+      ]
+    },
+    {
+      id: 4,
+      name: 'THB Reaseguros Limitada',
+      abbreviation: 'THB RE',
+      cmfCode: 'THB-001',
+      origin: 'LOCAL',
+      country: 'Chile',
+      region: 'SUR AMERICA',
+      taxId: '96.123.456-7',
+      accountingAux: 'AUX-004',
+      accountingAccount: 'COMISIONES',
+      effectiveFrom: '2022-01-01',
+      effectiveTo: null,
+      role: 'Bróker',
+      relationship: 'Es parte del grupo',
+      observations: 'Bróker local especializado en colocación de reaseguros. Parte del grupo empresarial.',
+      enabled: true,
+      reason: 'Alta',
+      user: 'admin',
+      lastModified: '2024-01-08',
+      addresses: [
+        {
+          id: 5,
+          companyId: 4,
+          type: 'DOMICILIO COMERCIAL',
+          address: 'Av. Providencia 1234',
+          number: '1234',
+          postalCode: '7500000',
+          city: 'Santiago'
+        }
+      ],
+      contacts: [
+        {
+          id: 7,
+          companyId: 4,
+          type: 'Comercial',
+          name: 'Roberto Silva',
+          contactNumber: '+56-2-2345-6789',
+          email: 'roberto.silva@thbre.cl'
+        },
+        {
+          id: 8,
+          companyId: 4,
+          type: 'Jurídico',
+          name: 'Patricia Morales',
+          contactNumber: '+56-2-2345-6790',
+          email: 'patricia.morales@thbre.cl'
+        }
+      ],
+      riskClassifications: [
+        {
+          id: 5,
+          companyId: 4,
+          year: 2024,
+          ratingAgency: 'Feller Rate',
+          classificationType: 'A+',
+          classificationDate: '2024-02-01',
+          letterDate: '2024-01-28'
+        }
+      ],
+      patrimony: [
+        {
+          id: 5,
+          companyId: 4,
+          year: 2024,
+          amount: 25000000,
+          currency: 'CLP',
+          technicalBranch: 'Generales',
+          maxAccumulation: 5000000
         }
       ]
     }
@@ -261,12 +457,25 @@ const MaintainersModule: React.FC = () => {
     }
   };
 
-  const handleViewCompany = (company: any) => {
+  const getRelationshipColor = (relationship: string) => {
+    switch (relationship) {
+      case 'Es parte del grupo':
+        return 'bg-blue-100 text-blue-800';
+      case 'Es casa matriz':
+        return 'bg-purple-100 text-purple-800';
+      case 'Uso interno':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleViewCompany = (company: Company) => {
     setSelectedCompany(company);
     setShowCompanyDetails(true);
   };
 
-  const handleEditCompany = (company: any) => {
+  const handleEditCompany = (company: Company) => {
     setSelectedCompany(company);
     setShowNewCompanyModal(true);
   };
@@ -279,7 +488,7 @@ const MaintainersModule: React.FC = () => {
 
   const CompanyModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-xl max-w-7xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h3 className="text-xl font-semibold text-gray-900">
             {selectedCompany ? 'Editar Compañía' : 'Nueva Compañía Reaseguradora/Bróker'}
@@ -340,7 +549,10 @@ const MaintainersModule: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Origen de Compañía *
                 </label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.origin || 'EXTRANJERO'}
+                >
                   <option value="LOCAL">LOCAL</option>
                   <option value="EXTRANJERO">EXTRANJERO</option>
                 </select>
@@ -349,20 +561,28 @@ const MaintainersModule: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   País *
                 </label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.country || ''}
+                >
                   <option>Chile</option>
                   <option>Suiza</option>
                   <option>Alemania</option>
                   <option>España</option>
                   <option>Reino Unido</option>
                   <option>Estados Unidos</option>
+                  <option>Francia</option>
+                  <option>Italia</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Región
                 </label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.region || ''}
+                >
                   <option>SUR AMERICA</option>
                   <option>EUROPA</option>
                   <option>NORTE AMERICA</option>
@@ -383,9 +603,57 @@ const MaintainersModule: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Auxiliar Contable
+                </label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Referencia contable adicional"
+                  defaultValue={selectedCompany?.accountingAux || ''}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Cuenta Contable
+                </label>
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.accountingAccount || 'PRIMAS'}
+                >
+                  <option value="PRIMAS">PRIMAS</option>
+                  <option value="COMISIONES">COMISIONES</option>
+                  <option value="SINIESTROS">SINIESTROS</option>
+                  <option value="GASTOS">GASTOS</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Efectiva Desde *
+                </label>
+                <input
+                  type="date"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.effectiveFrom || ''}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Efectiva Hasta
+                </label>
+                <input
+                  type="date"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.effectiveTo || ''}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Rol *
                 </label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.role || 'Reasegurador'}
+                >
                   <option>Reasegurador</option>
                   <option>Bróker</option>
                   <option>Ambos</option>
@@ -395,12 +663,39 @@ const MaintainersModule: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Relación
                 </label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.relationship || 'Ninguna'}
+                >
                   <option>Ninguna</option>
                   <option>Uso interno</option>
                   <option>Es parte del grupo</option>
                   <option>Es casa matriz</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Motivo
+                </label>
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  defaultValue={selectedCompany?.reason || 'Alta'}
+                >
+                  <option>Alta</option>
+                  <option>Baja</option>
+                  <option>Modificación</option>
+                </select>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="enabled"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  defaultChecked={selectedCompany?.enabled ?? true}
+                />
+                <label htmlFor="enabled" className="ml-2 block text-sm text-gray-900">
+                  Compañía Habilitada
+                </label>
               </div>
             </div>
             <div className="mt-4">
@@ -429,42 +724,50 @@ const MaintainersModule: React.FC = () => {
               </button>
             </div>
             <div className="space-y-3">
-              <div className="bg-white rounded-lg p-3 border border-emerald-200">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Dirección</label>
-                    <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm">
-                      <option>DOMICILIO COMERCIAL</option>
-                      <option>ADMINISTRATIVA</option>
-                      <option>SUCURSAL</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Dirección</label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      placeholder="Dirección completa"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Número</label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      placeholder="Número"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Código Postal</label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      placeholder="Código postal"
-                    />
+              {[1, 2].map((index) => (
+                <div key={index} className="bg-white rounded-lg p-3 border border-emerald-200">
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Dirección</label>
+                      <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option>DOMICILIO COMERCIAL</option>
+                        <option>ADMINISTRATIVA</option>
+                        <option>SUCURSAL</option>
+                        <option>REPRESENTACIÓN</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Dirección</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="Dirección completa"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Número</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="Número"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Código Postal</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="Código postal"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <button className="text-red-600 hover:text-red-800 p-1">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -481,43 +784,191 @@ const MaintainersModule: React.FC = () => {
               </button>
             </div>
             <div className="space-y-3">
-              <div className="bg-white rounded-lg p-3 border border-orange-200">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Contacto</label>
-                    <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm">
-                      <option>Comercial</option>
-                      <option>Técnico</option>
-                      <option>Financiero</option>
-                      <option>Jurídico</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Contacto</label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      placeholder="Nombre completo"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Teléfono</label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      placeholder="Número de teléfono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
-                    <input
-                      type="email"
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                      placeholder="correo@empresa.com"
-                    />
+              {[1, 2].map((index) => (
+                <div key={index} className="bg-white rounded-lg p-3 border border-orange-200">
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Contacto</label>
+                      <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option>Comercial</option>
+                        <option>Técnico</option>
+                        <option>Financiero</option>
+                        <option>Jurídico</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Nombre del Contacto</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="Nombre completo"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Número de Contacto</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="Número de teléfono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
+                      <input
+                        type="email"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="correo@empresa.com"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <button className="text-red-600 hover:text-red-800 p-1">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Risk Classifications Section */}
+          <div className="bg-yellow-50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-medium text-yellow-900 flex items-center">
+                <Star className="h-5 w-5 mr-2" />
+                Clasificaciones de Riesgo
+              </h4>
+              <button className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-lg text-sm flex items-center space-x-1">
+                <Plus className="h-4 w-4" />
+                <span>Agregar Clasificación</span>
+              </button>
+            </div>
+            <div className="space-y-3">
+              {[1].map((index) => (
+                <div key={index} className="bg-white rounded-lg p-3 border border-yellow-200">
+                  <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Año</label>
+                      <input
+                        type="number"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="2024"
+                        min="2020"
+                        max="2030"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Empresa Clasificadora</label>
+                      <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option>Standard & Poor's</option>
+                        <option>Moody's</option>
+                        <option>Fitch Ratings</option>
+                        <option>Feller Rate</option>
+                        <option>ICR</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Tipo de Clasificación</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="AA-, A2, BBB+"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Fecha de Clasificación</label>
+                      <input
+                        type="date"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Fecha Carta</label>
+                      <input
+                        type="date"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <button className="text-red-600 hover:text-red-800 p-1">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Patrimony Section */}
+          <div className="bg-purple-50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-medium text-purple-900 flex items-center">
+                <DollarSign className="h-5 w-5 mr-2" />
+                Patrimonio y Cúmulos Máximos
+              </h4>
+              <button className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg text-sm flex items-center space-x-1">
+                <Plus className="h-4 w-4" />
+                <span>Agregar Patrimonio</span>
+              </button>
+            </div>
+            <div className="space-y-3">
+              {[1].map((index) => (
+                <div key={index} className="bg-white rounded-lg p-3 border border-purple-200">
+                  <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Año</label>
+                      <input
+                        type="number"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="2024"
+                        min="2020"
+                        max="2030"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Monto</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="45,000,000,000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Moneda</label>
+                      <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option>USD</option>
+                        <option>EUR</option>
+                        <option>CLP</option>
+                        <option>GBP</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Agrupación / Ramo</label>
+                      <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option>Incendio</option>
+                        <option>Responsabilidad Civil</option>
+                        <option>Automóviles</option>
+                        <option>Vida</option>
+                        <option>Generales</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Cúmulo Máximo</label>
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+                        placeholder="500,000,000"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <button className="text-red-600 hover:text-red-800 p-1">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -543,11 +994,19 @@ const MaintainersModule: React.FC = () => {
 
   const CompanyDetailsModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-xl max-w-7xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h3 className="text-xl font-semibold text-gray-900">{selectedCompany?.name}</h3>
-            <p className="text-sm text-gray-500">{selectedCompany?.abbreviation}</p>
+            <div className="flex items-center space-x-2 mt-1">
+              <span className="text-sm text-gray-500">{selectedCompany?.abbreviation}</span>
+              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getOriginColor(selectedCompany?.origin || '')}`}>
+                {selectedCompany?.origin}
+              </span>
+              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(selectedCompany?.role || '')}`}>
+                {selectedCompany?.role}
+              </span>
+            </div>
           </div>
           <button
             onClick={() => {
@@ -562,12 +1021,13 @@ const MaintainersModule: React.FC = () => {
         
         <div className="p-6 space-y-6">
           {/* Company Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="bg-blue-50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-700">Origen</p>
-                  <p className="text-lg font-bold text-blue-900">{selectedCompany?.origin}</p>
+                  <p className="text-sm font-medium text-blue-700">País/Región</p>
+                  <p className="text-lg font-bold text-blue-900">{selectedCompany?.country}</p>
+                  <p className="text-xs text-blue-600">{selectedCompany?.region}</p>
                 </div>
                 <Globe className="h-8 w-8 text-blue-600" />
               </div>
@@ -575,17 +1035,19 @@ const MaintainersModule: React.FC = () => {
             <div className="bg-emerald-50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-emerald-700">País</p>
-                  <p className="text-lg font-bold text-emerald-900">{selectedCompany?.country}</p>
+                  <p className="text-sm font-medium text-emerald-700">Código CMF</p>
+                  <p className="text-lg font-bold text-emerald-900">{selectedCompany?.cmfCode}</p>
+                  <p className="text-xs text-emerald-600">Regulador</p>
                 </div>
-                <MapPin className="h-8 w-8 text-emerald-600" />
+                <Shield className="h-8 w-8 text-emerald-600" />
               </div>
             </div>
             <div className="bg-purple-50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-purple-700">Rol</p>
-                  <p className="text-lg font-bold text-purple-900">{selectedCompany?.role}</p>
+                  <p className="text-sm font-medium text-purple-700">Relación</p>
+                  <p className="text-sm font-bold text-purple-900">{selectedCompany?.relationship}</p>
+                  <p className="text-xs text-purple-600">Tipo</p>
                 </div>
                 <Users className="h-8 w-8 text-purple-600" />
               </div>
@@ -595,8 +1057,49 @@ const MaintainersModule: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-orange-700">Estado</p>
                   <p className="text-lg font-bold text-orange-900">{selectedCompany?.enabled ? 'Activa' : 'Inactiva'}</p>
+                  <p className="text-xs text-orange-600">{selectedCompany?.reason}</p>
                 </div>
-                <Shield className="h-8 w-8 text-orange-600" />
+                {selectedCompany?.enabled ? (
+                  <CheckCircle className="h-8 w-8 text-emerald-600" />
+                ) : (
+                  <AlertCircle className="h-8 w-8 text-red-600" />
+                )}
+              </div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Vigencia</p>
+                  <p className="text-sm font-bold text-gray-900">{selectedCompany?.effectiveFrom}</p>
+                  <p className="text-xs text-gray-600">Desde</p>
+                </div>
+                <Calendar className="h-8 w-8 text-gray-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Basic Information */}
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Building className="h-5 w-5 mr-2 text-blue-600" />
+              Información Básica
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <p className="text-gray-600">Identificación Tributaria</p>
+                <p className="font-medium text-gray-900">{selectedCompany?.taxId}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Auxiliar Contable</p>
+                <p className="font-medium text-gray-900">{selectedCompany?.accountingAux}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Cuenta Contable</p>
+                <p className="font-medium text-gray-900">{selectedCompany?.accountingAccount}</p>
+              </div>
+              <div className="md:col-span-3">
+                <p className="text-gray-600">Observaciones</p>
+                <p className="font-medium text-gray-900">{selectedCompany?.observations}</p>
               </div>
             </div>
           </div>
@@ -608,7 +1111,7 @@ const MaintainersModule: React.FC = () => {
               Direcciones
             </h4>
             <div className="space-y-3">
-              {selectedCompany?.addresses?.map((address: any, index: number) => (
+              {selectedCompany?.addresses?.map((address, index) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-3">
                   <div className="flex items-start justify-between">
                     <div>
@@ -629,7 +1132,7 @@ const MaintainersModule: React.FC = () => {
               Contactos
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {selectedCompany?.contacts?.map((contact: any, index: number) => (
+              {selectedCompany?.contacts?.map((contact, index) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-3">
                   <div className="flex items-start space-x-3">
                     <div className="bg-orange-100 rounded-lg p-2">
@@ -638,7 +1141,7 @@ const MaintainersModule: React.FC = () => {
                     <div>
                       <p className="font-medium text-gray-900">{contact.name}</p>
                       <p className="text-sm text-gray-600">{contact.type}</p>
-                      <p className="text-sm text-gray-500">{contact.phone}</p>
+                      <p className="text-sm text-gray-500">{contact.contactNumber}</p>
                       <p className="text-sm text-blue-600">{contact.email}</p>
                     </div>
                   </div>
@@ -660,11 +1163,12 @@ const MaintainersModule: React.FC = () => {
                     <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Año</th>
                     <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Agencia</th>
                     <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Clasificación</th>
-                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Fecha</th>
+                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Fecha Clasificación</th>
+                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Fecha Carta</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {selectedCompany?.riskClassifications?.map((classification: any, index: number) => (
+                  {selectedCompany?.riskClassifications?.map((classification, index) => (
                     <tr key={index}>
                       <td className="px-4 py-2 text-sm text-gray-900">{classification.year}</td>
                       <td className="px-4 py-2 text-sm text-gray-900">{classification.ratingAgency}</td>
@@ -674,6 +1178,43 @@ const MaintainersModule: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-500">{classification.classificationDate}</td>
+                      <td className="px-4 py-2 text-sm text-gray-500">{classification.letterDate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Patrimony */}
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <DollarSign className="h-5 w-5 mr-2 text-purple-600" />
+              Patrimonio y Cúmulos Máximos
+            </h4>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Año</th>
+                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Patrimonio</th>
+                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Moneda</th>
+                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Ramo Técnico</th>
+                    <th className="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Cúmulo Máximo</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {selectedCompany?.patrimony?.map((patrimony, index) => (
+                    <tr key={index}>
+                      <td className="px-4 py-2 text-sm text-gray-900">{patrimony.year}</td>
+                      <td className="px-4 py-2 text-sm font-medium text-gray-900">
+                        {formatCurrency(patrimony.amount, patrimony.currency)}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-900">{patrimony.currency}</td>
+                      <td className="px-4 py-2 text-sm text-gray-900">{patrimony.technicalBranch}</td>
+                      <td className="px-4 py-2 text-sm text-gray-900">
+                        {formatCurrency(patrimony.maxAccumulation, patrimony.currency)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -692,7 +1233,7 @@ const MaintainersModule: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Mantenedores del Sistema</h2>
-            <p className="text-gray-600">Gestión de compañías reaseguradoras, brókers y configuración del sistema</p>
+            <p className="text-gray-600">Gestión completa de compañías reaseguradoras, brókers y configuración del sistema</p>
           </div>
           <button 
             onClick={() => setShowNewCompanyModal(true)}
@@ -749,7 +1290,7 @@ const MaintainersModule: React.FC = () => {
                     <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Buscar compañías por nombre, abreviatura o país..."
+                      placeholder="Buscar compañías por nombre, abreviatura, país o código CMF..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -766,7 +1307,7 @@ const MaintainersModule: React.FC = () => {
 
                 {filterOpen && (
                   <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                       <select className="border border-gray-300 rounded-lg px-3 py-2">
                         <option>Todos los roles</option>
                         <option>Reasegurador</option>
@@ -785,6 +1326,13 @@ const MaintainersModule: React.FC = () => {
                         <option>SUR AMERICA</option>
                         <option>EUROPA</option>
                         <option>NORTE AMERICA</option>
+                      </select>
+                      <select className="border border-gray-300 rounded-lg px-3 py-2">
+                        <option>Todas las relaciones</option>
+                        <option>Ninguna</option>
+                        <option>Es parte del grupo</option>
+                        <option>Es casa matriz</option>
+                        <option>Uso interno</option>
                       </select>
                       <select className="border border-gray-300 rounded-lg px-3 py-2">
                         <option>Todos los estados</option>
@@ -807,7 +1355,7 @@ const MaintainersModule: React.FC = () => {
                           Origen/País
                         </th>
                         <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Rol
+                          Rol/Relación
                         </th>
                         <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Clasificación
@@ -817,6 +1365,9 @@ const MaintainersModule: React.FC = () => {
                         </th>
                         <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Estado
+                        </th>
+                        <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Vigencia
                         </th>
                         <th className="relative px-6 py-3">
                           <span className="sr-only">Acciones</span>
@@ -832,6 +1383,7 @@ const MaintainersModule: React.FC = () => {
                               <div>
                                 <div className="text-sm font-medium text-gray-900">{company.name}</div>
                                 <div className="text-sm text-gray-500">{company.abbreviation}</div>
+                                <div className="text-xs text-gray-400">{company.cmfCode}</div>
                               </div>
                             </div>
                           </td>
@@ -841,27 +1393,45 @@ const MaintainersModule: React.FC = () => {
                                 {company.origin}
                               </span>
                               <div className="text-sm text-gray-900 mt-1">{company.country}</div>
+                              <div className="text-xs text-gray-500">{company.region}</div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(company.role)}`}>
-                              {company.role}
-                            </span>
+                            <div className="space-y-1">
+                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(company.role)}`}>
+                                {company.role}
+                              </span>
+                              <div>
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRelationshipColor(company.relationship)}`}>
+                                  {company.relationship}
+                                </span>
+                              </div>
+                            </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {company.riskClassifications.length > 0 && (
                               <div className="flex items-center">
                                 <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                                <span className="text-sm font-medium text-gray-900">
-                                  {company.riskClassifications[0].classificationType}
-                                </span>
+                                <div>
+                                  <span className="text-sm font-medium text-gray-900">
+                                    {company.riskClassifications[0].classificationType}
+                                  </span>
+                                  <div className="text-xs text-gray-500">
+                                    {company.riskClassifications[0].ratingAgency}
+                                  </div>
+                                </div>
                               </div>
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {company.patrimony.length > 0 && (
-                              <div className="text-sm font-medium text-gray-900">
-                                {formatCurrency(company.patrimony[0].amount, company.patrimony[0].currency)}
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {formatCurrency(company.patrimony[0].amount, company.patrimony[0].currency)}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {company.patrimony[0].technicalBranch}
+                                </div>
                               </div>
                             )}
                           </td>
@@ -871,6 +1441,12 @@ const MaintainersModule: React.FC = () => {
                             }`}>
                               {company.enabled ? 'Activa' : 'Inactiva'}
                             </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">{company.effectiveFrom}</div>
+                            {company.effectiveTo && (
+                              <div className="text-xs text-gray-500">hasta {company.effectiveTo}</div>
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center space-x-2">
@@ -998,7 +1574,7 @@ const MaintainersModule: React.FC = () => {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -1033,10 +1609,21 @@ const MaintainersModule: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Ramos Técnicos</p>
-                <p className="text-2xl font-bold text-purple-600">{technicalBranches.length}</p>
+                <p className="text-sm font-medium text-gray-600">Extranjeras</p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {companies.filter(c => c.origin === 'EXTRANJERO').length}
+                </p>
               </div>
-              <FileText className="h-8 w-8 text-purple-500" />
+              <Globe className="h-8 w-8 text-purple-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Ramos Técnicos</p>
+                <p className="text-2xl font-bold text-indigo-600">{technicalBranches.length}</p>
+              </div>
+              <FileText className="h-8 w-8 text-indigo-500" />
             </div>
           </div>
         </div>
