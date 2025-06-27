@@ -1,12 +1,22 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { 
+  TrendingUp, 
+  TrendingDown, 
   DollarSign, 
   FileText, 
   AlertTriangle,
   Users,
   BarChart3,
   PieChart,
+  Shield,
+  Building,
+  Calculator
+  Shield,
+  Building,
+  Calculator
   Shield,
   Building,
   Calculator
@@ -18,6 +28,10 @@ import RecentActivity from './ui/RecentActivity';
 const Dashboard: React.FC = () => {
   const { user, hasPermission } = useAuth();
 
+  const { user, hasPermission } = useAuth();
+
+  const { user, hasPermission } = useAuth();
+
   const stats = [
     {
       title: 'Primas Cedidas',
@@ -25,6 +39,8 @@ const Dashboard: React.FC = () => {
       change: '+12.5%',
       trend: 'up' as const,
       icon: DollarSign,
+      permission: 'view_dashboard'
+      permission: 'view_dashboard'
       permission: 'view_dashboard'
     },
     {
@@ -34,6 +50,8 @@ const Dashboard: React.FC = () => {
       trend: 'up' as const,
       icon: FileText,
       permission: 'manage_contracts'
+      permission: 'manage_contracts'
+      permission: 'manage_contracts'
     },
     {
       title: 'Siniestros Pendientes',
@@ -42,6 +60,8 @@ const Dashboard: React.FC = () => {
       trend: 'down' as const,
       icon: AlertTriangle,
       permission: 'view_claims'
+      permission: 'view_claims'
+      permission: 'view_claims'
     },
     {
       title: 'Reaseguradoras',
@@ -49,6 +69,8 @@ const Dashboard: React.FC = () => {
       change: '+2',
       trend: 'up' as const,
       icon: Users,
+      permission: 'manage_maintainers'
+      permission: 'manage_maintainers'
       permission: 'manage_maintainers'
     }
   ];
@@ -94,6 +116,88 @@ const Dashboard: React.FC = () => {
   const welcomeConfig = getWelcomeMessage();
   const WelcomeIcon = welcomeConfig.icon;
 
+  // Filtrar estadísticas según permisos
+  const filteredStats = stats.filter(stat => 
+    !stat.permission || hasPermission(stat.permission)
+  );
+
+  const getWelcomeMessage = () => {
+    switch (user?.role) {
+      case 'tecnico':
+        return {
+          title: 'Panel Técnico - Sistema de Reaseguros',
+          subtitle: 'Gestione contratos, mantenedores y configuración del sistema',
+          icon: Shield,
+          color: 'from-blue-600 to-blue-800'
+        };
+      case 'compania':
+        return {
+          title: 'Portal de Compañía - Colocación de Seguros',
+          subtitle: 'Gestione la colocación de pólizas y seguimiento de reaseguros',
+          icon: Building,
+          color: 'from-emerald-600 to-emerald-800'
+        };
+      case 'reaseguros':
+        return {
+          title: 'Portal Reasegurador - Cuentas Corrientes',
+          subtitle: 'Gestione cuentas corrientes, bordereaux y liquidaciones',
+          icon: Calculator,
+          color: 'from-purple-600 to-purple-800'
+        };
+      default:
+        return {
+          title: 'Bienvenido al Sistema de Reaseguros',
+          subtitle: 'Gestiona contratos, colocaciones y siniestros de manera eficiente',
+          icon: BarChart3,
+          color: 'from-blue-600 to-blue-800'
+        };
+    }
+  };
+
+  const welcomeConfig = getWelcomeMessage();
+  const WelcomeIcon = welcomeConfig.icon;
+
+  // Filtrar estadísticas según permisos
+  const filteredStats = stats.filter(stat => 
+    !stat.permission || hasPermission(stat.permission)
+  );
+
+  const getWelcomeMessage = () => {
+    switch (user?.role) {
+      case 'tecnico':
+        return {
+          title: 'Panel Técnico - Sistema de Reaseguros',
+          subtitle: 'Gestione contratos, mantenedores y configuración del sistema',
+          icon: Shield,
+          color: 'from-blue-600 to-blue-800'
+        };
+      case 'compania':
+        return {
+          title: 'Portal de Compañía - Colocación de Seguros',
+          subtitle: 'Gestione la colocación de pólizas y seguimiento de reaseguros',
+          icon: Building,
+          color: 'from-emerald-600 to-emerald-800'
+        };
+      case 'reaseguros':
+        return {
+          title: 'Portal Reasegurador - Cuentas Corrientes',
+          subtitle: 'Gestione cuentas corrientes, bordereaux y liquidaciones',
+          icon: Calculator,
+          color: 'from-purple-600 to-purple-800'
+        };
+      default:
+        return {
+          title: 'Bienvenido al Sistema de Reaseguros',
+          subtitle: 'Gestiona contratos, colocaciones y siniestros de manera eficiente',
+          icon: BarChart3,
+          color: 'from-blue-600 to-blue-800'
+        };
+    }
+  };
+
+  const welcomeConfig = getWelcomeMessage();
+  const WelcomeIcon = welcomeConfig.icon;
+
   return (
     <div className="space-y-6">
       {/* Header Section */}
@@ -101,10 +205,16 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold mb-2">{welcomeConfig.title}</h2>
-            <p className="text-white/80">
+            <p className="text-blue-100">
               {welcomeConfig.subtitle}
             </p>
-            <p className="text-sm text-white/70 mt-2">
+            <p className="text-sm text-blue-200 mt-2">
+              Bienvenido, {user?.name} - {user?.company}
+            </p>
+            <p className="text-sm text-blue-200 mt-2">
+              Bienvenido, {user?.name} - {user?.company}
+            </p>
+            <p className="text-sm text-blue-200 mt-2">
               Bienvenido, {user?.name} - {user?.company}
             </p>
           </div>
@@ -115,31 +225,6 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Stats Grid */}
-      {hasPermission('view_dashboard') && filteredStats.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredStats.map((stat, index) => (
-            <StatsCard key={index} {...stat} />
-          ))}
-        </div>
-      )}
-
-      {/* Charts and Activity */}
-      {hasPermission('view_dashboard') && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <ChartCard 
-              title="Evolución de Primas Cedidas"
-              subtitle="Últimos 12 meses"
-            />
-          </div>
-          <div>
-            <RecentActivity />
-          </div>
-        </div>
-      )}
-
       {hasPermission('view_dashboard') && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
@@ -153,7 +238,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </button>
             )}
-            {hasPermission('manage_placement') && (
+            {hasPermission('create_placement') && (
               <button className="flex items-center space-x-3 p-4 bg-[#ED6A26]/10 hover:bg-[#ED6A26]/20 rounded-lg transition-colors">
                 <PieChart className="h-6 w-6 text-[#ED6A26]" />
                 <div className="text-left">
@@ -164,6 +249,50 @@ const Dashboard: React.FC = () => {
             )}
             {hasPermission('view_claims') && (
               <button className="flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+                <AlertTriangle className="h-6 w-6 text-orange-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Reportar Siniestro</p>
+                  <p className="text-sm text-gray-500">Registrar nuevo siniestro</p>
+                </div>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      {hasPermission('view_dashboard') && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {hasPermission('manage_contracts') && (
+              <button className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                <FileText className="h-6 w-6 text-blue-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Nuevo Contrato</p>
+                  <p className="text-sm text-gray-500">Crear contrato de reaseguro</p>
+                </div>
+              </button>
+            )}
+            {hasPermission('manage_placement') && (
+              <button className="flex items-center space-x-3 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors">
+                <PieChart className="h-6 w-6 text-emerald-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Colocar Póliza</p>
+                  <p className="text-sm text-gray-500">Procesar nueva colocación</p>
+                </div>
+              </button>
+            )}
+            {hasPermission('view_claims') && (
+              <button className="flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+                <AlertTriangle className="h-6 w-6 text-orange-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Reportar Siniestro</p>
+                  <p className="text-sm text-gray-500">Registrar nuevo siniestro</p>
+                </div>
+              </button>
+            )}
+          </div>
                 <AlertTriangle className="h-6 w-6 text-orange-600" />
                 <div className="text-left">
                   <p className="font-medium text-gray-900">Reportar Siniestro</p>
