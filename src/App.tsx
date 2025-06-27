@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginPage from './components/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -8,24 +11,49 @@ import ClaimsModule from './components/modules/ClaimsModule';
 import AccountingModule from './components/modules/AccountingModule';
 import MaintainersModule from './components/modules/MaintainersModule';
 
-function App() {
+const AppContent: React.FC = () => {
+  const { isAuthenticated, user } = useAuth();
   const [activeModule, setActiveModule] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
 
   const renderActiveModule = () => {
     switch (activeModule) {
       case 'dashboard':
         return <Dashboard />;
       case 'contracts':
-        return <ContractsModule />;
+        return (
+          <ProtectedRoute requiredPermission="manage_contracts">
+            <ContractsModule />
+          </ProtectedRoute>
+        );
       case 'placement':
-        return <PlacementModule />;
+        return (
+          <ProtectedRoute requiredPermission="view_placement">
+            <PlacementModule />
+          </ProtectedRoute>
+        );
       case 'claims':
-        return <ClaimsModule />;
+        return (
+          <ProtectedRoute requiredPermission="view_claims">
+            <ClaimsModule />
+          </ProtectedRoute>
+        );
       case 'accounting':
-        return <AccountingModule />;
+        return (
+          <ProtectedRoute requiredPermission="view_accounting">
+            <AccountingModule />
+          </ProtectedRoute>
+        );
       case 'maintainers':
-        return <MaintainersModule />;
+        return (
+          <ProtectedRoute requiredPermission="manage_maintainers">
+            <MaintainersModule />
+          </ProtectedRoute>
+        );
       default:
         return <Dashboard />;
     }
@@ -50,6 +78,14 @@ function App() {
         </main>
       </div>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

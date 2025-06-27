@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import ProtectedRoute from '../ProtectedRoute';
 import { 
   Upload, 
   FileSpreadsheet, 
@@ -11,6 +13,7 @@ import {
 } from 'lucide-react';
 
 const PlacementModule: React.FC = () => {
+  const { hasPermission, user } = useAuth();
   const [activeTab, setActiveTab] = useState('individual');
 
   const placements = [
@@ -64,23 +67,43 @@ const PlacementModule: React.FC = () => {
     }
   };
 
+  const getHeaderInfo = () => {
+    if (user?.role === 'compania') {
+      return {
+        title: 'Colocación de Seguros',
+        subtitle: 'Gestione la colocación de pólizas en el mercado reasegurador',
+        color: 'bg-emerald-600 hover:bg-emerald-700'
+      };
+    }
+    return {
+      title: 'Colocación de Reaseguros',
+      subtitle: 'Gestiona colocaciones individuales y masivas de pólizas',
+      color: 'bg-blue-600 hover:bg-blue-700'
+    };
+  };
+
+  const headerInfo = getHeaderInfo();
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Colocación de Reaseguros</h2>
-          <p className="text-gray-600">Gestiona colocaciones individuales y masivas de pólizas</p>
+          <h2 className="text-2xl font-bold text-gray-900">{headerInfo.title}</h2>
+          <p className="text-gray-600">{headerInfo.subtitle}</p>
         </div>
         <div className="flex space-x-3">
-          <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-            <Upload className="h-4 w-4" />
-            <span>Carga Masiva</span>
-          </button>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-            <Plus className="h-4 w-4" />
-            <span>Colocación Individual</span>
-          </button>
+          {hasPermission('upload_policies') && (
+            <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+              <Upload className="h-4 w-4" />
+              <span>Carga Masiva</span>
+            </button>
+          )}
+          {hasPermission('create_placement') && (
+            <button className={`${headerInfo.color} text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors`}>
+              <Plus className="h-4 w-4" />
+              <span>Colocación Individual</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -88,26 +111,30 @@ const PlacementModule: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8 px-6">
-            <button
-              onClick={() => setActiveTab('individual')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'individual'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Colocación Individual
-            </button>
-            <button
-              onClick={() => setActiveTab('bulk')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'bulk'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Carga Masiva
-            </button>
+            {hasPermission('create_placement') && (
+              <button
+                onClick={() => setActiveTab('individual')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === 'individual'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Colocación Individual
+              </button>
+            )}
+            {hasPermission('upload_policies') && (
+              <button
+                onClick={() => setActiveTab('bulk')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === 'bulk'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Carga Masiva
+              </button>
+            )}
             <button
               onClick={() => setActiveTab('history')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
@@ -122,7 +149,8 @@ const PlacementModule: React.FC = () => {
         </div>
 
         <div className="p-6">
-          {activeTab === 'individual' && (
+          {activeTab === 'individual' && hasPermission('create_placement') && (
+            <ProtectedRoute requiredPermission="create_placement">
             <div className="space-y-6">
               <div className="bg-blue-50 rounded-lg p-6">
                 <div className="flex items-center space-x-3 mb-4">
@@ -174,7 +202,7 @@ const PlacementModule: React.FC = () => {
                   </div>
                 </div>
                 <div className="mt-6 flex space-x-3">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
+                  <button className={`${headerInfo.color} text-white px-6 py-2 rounded-lg transition-colors`}>
                     Colocar Reaseguro
                   </button>
                   <button className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg transition-colors">
@@ -183,9 +211,11 @@ const PlacementModule: React.FC = () => {
                 </div>
               </div>
             </div>
+            </ProtectedRoute>
           )}
 
-          {activeTab === 'bulk' && (
+          {activeTab === 'bulk' && hasPermission('upload_policies') && (
+            <ProtectedRoute requiredPermission="upload_policies">
             <div className="space-y-6">
               <div className="text-center py-12">
                 <FileSpreadsheet className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -205,6 +235,7 @@ const PlacementModule: React.FC = () => {
                 </div>
               </div>
             </div>
+            </ProtectedRoute>
           )}
 
           {activeTab === 'history' && (

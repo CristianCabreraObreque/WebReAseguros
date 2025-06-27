@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -7,110 +8,173 @@ import {
   AlertTriangle,
   Users,
   BarChart3,
-  PieChart
+  PieChart,
+  Shield,
+  Building,
+  Calculator
 } from 'lucide-react';
 import StatsCard from './ui/StatsCard';
 import ChartCard from './ui/ChartCard';
 import RecentActivity from './ui/RecentActivity';
 
 const Dashboard: React.FC = () => {
+  const { user, hasPermission } = useAuth();
+
   const stats = [
     {
       title: 'Primas Cedidas',
       value: '$48.2M',
       change: '+12.5%',
       trend: 'up' as const,
-      icon: DollarSign
+      icon: DollarSign,
+      permission: 'view_dashboard'
     },
     {
       title: 'Contratos Activos',
       value: '156',
       change: '+8',
       trend: 'up' as const,
-      icon: FileText
+      icon: FileText,
+      permission: 'manage_contracts'
     },
     {
       title: 'Siniestros Pendientes',
       value: '23',
       change: '-5',
       trend: 'down' as const,
-      icon: AlertTriangle
+      icon: AlertTriangle,
+      permission: 'view_claims'
     },
     {
       title: 'Reaseguradoras',
       value: '34',
       change: '+2',
       trend: 'up' as const,
-      icon: Users
+      icon: Users,
+      permission: 'manage_maintainers'
     }
   ];
+
+  // Filtrar estadísticas según permisos
+  const filteredStats = stats.filter(stat => 
+    !stat.permission || hasPermission(stat.permission)
+  );
+
+  const getWelcomeMessage = () => {
+    switch (user?.role) {
+      case 'tecnico':
+        return {
+          title: 'Panel Técnico - Sistema de Reaseguros',
+          subtitle: 'Gestione contratos, mantenedores y configuración del sistema',
+          icon: Shield,
+          color: 'from-blue-600 to-blue-800'
+        };
+      case 'compania':
+        return {
+          title: 'Portal de Compañía - Colocación de Seguros',
+          subtitle: 'Gestione la colocación de pólizas y seguimiento de reaseguros',
+          icon: Building,
+          color: 'from-emerald-600 to-emerald-800'
+        };
+      case 'reaseguros':
+        return {
+          title: 'Portal Reasegurador - Cuentas Corrientes',
+          subtitle: 'Gestione cuentas corrientes, bordereaux y liquidaciones',
+          icon: Calculator,
+          color: 'from-purple-600 to-purple-800'
+        };
+      default:
+        return {
+          title: 'Bienvenido al Sistema de Reaseguros',
+          subtitle: 'Gestiona contratos, colocaciones y siniestros de manera eficiente',
+          icon: BarChart3,
+          color: 'from-blue-600 to-blue-800'
+        };
+    }
+  };
+
+  const welcomeConfig = getWelcomeMessage();
+  const WelcomeIcon = welcomeConfig.icon;
 
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 text-white">
+      <div className={`bg-gradient-to-r ${welcomeConfig.color} rounded-xl p-6 text-white`}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-2">Bienvenido al Sistema de Reaseguros</h2>
+            <h2 className="text-2xl font-bold mb-2">{welcomeConfig.title}</h2>
             <p className="text-blue-100">
-              Gestiona contratos, colocaciones y siniestros de manera eficiente
+              {welcomeConfig.subtitle}
+            </p>
+            <p className="text-sm text-blue-200 mt-2">
+              Bienvenido, {user?.name} - {user?.company}
             </p>
           </div>
           <div className="hidden md:block">
             <div className="bg-white/10 rounded-lg p-4">
-              <BarChart3 className="h-12 w-12" />
+              <WelcomeIcon className="h-12 w-12" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${filteredStats.length > 2 ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-6`}>
+        {filteredStats.map((stat, index) => (
           <StatsCard key={index} {...stat} />
         ))}
       </div>
 
       {/* Charts and Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <ChartCard 
-            title="Evolución de Primas Cedidas"
-            subtitle="Últimos 12 meses"
-          />
-        </div>
+        {hasPermission('view_dashboard') && (
+          <div className="lg:col-span-2">
+            <ChartCard 
+              title="Evolución de Primas Cedidas"
+              subtitle="Últimos 12 meses"
+            />
+          </div>
+        )}
         <div>
           <RecentActivity />
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-            <FileText className="h-6 w-6 text-blue-600" />
-            <div className="text-left">
-              <p className="font-medium text-gray-900">Nuevo Contrato</p>
-              <p className="text-sm text-gray-500">Crear contrato de reaseguro</p>
-            </div>
-          </button>
-          <button className="flex items-center space-x-3 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors">
-            <PieChart className="h-6 w-6 text-emerald-600" />
-            <div className="text-left">
-              <p className="font-medium text-gray-900">Colocar Póliza</p>
-              <p className="text-sm text-gray-500">Procesar nueva colocación</p>
-            </div>
-          </button>
-          <button className="flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
-            <AlertTriangle className="h-6 w-6 text-orange-600" />
-            <div className="text-left">
-              <p className="font-medium text-gray-900">Reportar Siniestro</p>
-              <p className="text-sm text-gray-500">Registrar nuevo siniestro</p>
-            </div>
-          </button>
+      {hasPermission('view_dashboard') && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {hasPermission('manage_contracts') && (
+              <button className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                <FileText className="h-6 w-6 text-blue-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Nuevo Contrato</p>
+                  <p className="text-sm text-gray-500">Crear contrato de reaseguro</p>
+                </div>
+              </button>
+            )}
+            {hasPermission('manage_placement') && (
+              <button className="flex items-center space-x-3 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors">
+                <PieChart className="h-6 w-6 text-emerald-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Colocar Póliza</p>
+                  <p className="text-sm text-gray-500">Procesar nueva colocación</p>
+                </div>
+              </button>
+            )}
+            {hasPermission('view_claims') && (
+              <button className="flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+                <AlertTriangle className="h-6 w-6 text-orange-600" />
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Reportar Siniestro</p>
+                  <p className="text-sm text-gray-500">Registrar nuevo siniestro</p>
+                </div>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
